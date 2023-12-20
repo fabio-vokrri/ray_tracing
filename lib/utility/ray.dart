@@ -1,6 +1,6 @@
 import 'package:ray_tracing/utility/vector.dart';
 
-/// Ray type: represents a ray in space
+/// Ray type: represents a ray in space.
 class Ray {
   final Point3 _origin;
   final Vector3 _direction;

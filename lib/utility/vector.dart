@@ -34,8 +34,8 @@ class Vector3 {
     return this / length;
   }
 
-  /// Returns a new vector whose components are the sum between 
-  /// the components of this vectori and the ones of `other`.
+  /// Returns a new vector whose components are the sum between
+  /// the components of this vector and the ones of `other`.
   Vector3 operator +(Vector3 other) {
     return Vector3(
       _x + other.x,
@@ -80,7 +80,7 @@ class Vector3 {
   /// Throws `ArgumentException` if the given number is 0.
   Vector3 operator /(num t) {
     if (t == 0) {
-      throw ArgumentError("Division by zero not supoorted");
+      throw ArgumentError("Division by zero not supported");
     }
     return this * (1 / t);
   }
@@ -112,6 +112,7 @@ class Vector3 {
 }
 
 /// Point3 type: represents a point a three-dimensional space.
+///
 /// A point in space can be represented as a vector having its
-/// tail at (0, 0, 0) and its tip at the corresponding point.
+/// tail at (0, 0, 0) and its tip at the corresponding coordinates.
 typedef Point3 = Vector3;
