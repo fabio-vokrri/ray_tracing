@@ -4,7 +4,8 @@ class Color {
   final double _g;
   final double _b;
 
-  const Color(double r, double g, double b)
+  // private constructor
+  const Color._(double r, double g, double b)
       : _r = r,
         _g = g,
         _b = b;
@@ -15,8 +16,17 @@ class Color {
     double g = ((hex >> 8) & 0xFF) / 255; // gets g channel
     double b = (hex & 0xFF) / 255; // gets b channel
 
-    return Color(r, g, b);
+    return Color._(r, g, b);
   }
+
+  factory Color.fromRGB(int r, int g, int b) {
+    return Color._(r / 255, g / 255, b / 255);
+  }
+
+  Color.white()
+      : _r = 1,
+        _g = 1,
+        _b = 1;
 
   double get r => _r;
   double get g => _g;
@@ -25,7 +35,7 @@ class Color {
   /// Returns a new color whose channels are the sum between
   /// the channels of this color and the ones of `other`.
   Color operator +(Color other) {
-    return Color(
+    return Color._(
       _r + other.r,
       _g + other.g,
       _b + other.b,
@@ -39,7 +49,7 @@ class Color {
     double g = this.g - other.g;
     double b = this.b - other.b;
 
-    return Color(r, g, b);
+    return Color._(r, g, b);
   }
 
   /// Returns a new color whose channels are generated from
@@ -49,7 +59,7 @@ class Color {
       throw ArgumentError.value(t, null, "Cannot have negative r g b values");
     }
 
-    return Color(_r * t, _g * t, _b * t);
+    return Color._(_r * t, _g * t, _b * t);
   }
 
   /// Returns a new color whose channels are generated from
@@ -59,13 +69,13 @@ class Color {
     double g = this.g / t;
     double b = this.b / t;
 
-    return Color(r, g, b);
+    return Color._(r, g, b);
   }
 
   /// Returns a new color whose channels are generated from
   /// the product of every channel of this color with the ones of `other`.
   Color multiplyBy(Color other) {
-    return Color(_r * other.r, _g * other.g, _b * other.b);
+    return Color._(_r * other.r, _g * other.g, _b * other.b);
   }
 
   /// Returns a string representation of this color.

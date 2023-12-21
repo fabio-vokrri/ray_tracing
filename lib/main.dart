@@ -1,29 +1,65 @@
 import 'dart:io';
 
-import 'package:ray_tracing/utility/color.dart';
+import 'package:ray_tracing/utility/ray.dart';
+import 'package:ray_tracing/utility/vector.dart';
 
 void main(List<String> args) async {
-  int width = 256;
-  int heigth = 256;
+  double aspectRatio = 16 / 9;
+  int width = 1920;
+  // calculates the image height base on the given aspect ratio and width
+  int heigth = width ~/ aspectRatio;
+  heigth = heigth < 1 ? 1 : heigth;
+
+  // camera settings
+  double focalLength = 1;
+  double viewportHeight = 2;
+  double viewportWidth = viewportHeight * width / heigth;
+  Point3 cameraCenter = Point3(0, 0, 0);
+
+  // calculates the vectors across the horizontal and down vertical viewport edges
+  Vector3 viewportU = Vector3(viewportWidth, 0, 0);
+  Vector3 viewportV = Vector3(0, -viewportHeight, 0);
+
+  // calculates the horizontal and vertical delta vectors from pixel to pixel
+  Vector3 pixelDeltaU = viewportU / width;
+  Vector3 pixelDeltaV = viewportV / heigth;
+
+  // calculates the location of the upper left pixel
+  Point3 viewportUpperLeftLocation =
+      cameraCenter - Vector3(0, 0, focalLength) - viewportU / 2 - viewportV / 2;
+  Point3 firstPixelLocation =
+      viewportUpperLeftLocation + (pixelDeltaU + pixelDeltaV) / 2;
 
   // creates a buffer that will be written in the output image file (PPM format)
   StringBuffer content = StringBuffer("P3\n$width $heigth\n255\n");
 
-  // standard "hello world" for computer graphics
   for (int i = 0; i < heigth; i++) {
     stdout.write("\rLines remaining: ${heigth - i}\n");
     for (int j = 0; j < width; j++) {
-      Color pixelColor = Color(i / (width - 1), j / (heigth - 1), 0);
-      content.write(pixelColor); // toString method automatically invoked
+      Point3 pixelCenter =
+          firstPixelLocation + (pixelDeltaU * j) + (pixelDeltaV * i);
+      Vector3 rayDirection = pixelCenter - cameraCenter;
+
+      Ray ray = Ray(origin: cameraCenter, direction: rayDirection);
+      content.write(ray.color); // toString method automatically invoked
     }
   }
 
   stdout.write("\n\rDONE!\n");
 
   // creates the image output file
-  File image = File("output_image.ppm");
+  File image = File("outputs/output_image.ppm");
   // and writes the content buffer in it
   await image.writeAsString(content.toString());
 }
 
-void writeColor(Color pixelColor) {}
+/// Returns true if `ray` hits the sphere with the given `center` and `radius`.
+bool hitSphere(Point3 center, double radius, Ray ray) {
+  Vector3 oc = ray.origin - center;
+  double a = ray.direction.dot(ray.direction);
+  double b = oc.dot(ray.direction) * 2;
+  double c = oc.dot(oc) - radius * radius;
+  double discriminant = b * b - 4 * a * c;
+
+  return discriminant >= 0;
+}
