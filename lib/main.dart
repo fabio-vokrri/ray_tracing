@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:ray_tracing/utility/ray.dart';
-import 'package:ray_tracing/utility/vector.dart';
+import 'package:ray_tracing/geometry/ray.dart';
+import 'package:ray_tracing/geometry/vector.dart';
 
 void main(List<String> args) async {
   double aspectRatio = 16 / 9;
@@ -51,15 +51,4 @@ void main(List<String> args) async {
   File image = File("outputs/output_image.ppm");
   // and writes the content buffer in it
   await image.writeAsString(content.toString());
-}
-
-/// Returns true if `ray` hits the sphere with the given `center` and `radius`.
-bool hitSphere(Point3 center, double radius, Ray ray) {
-  Vector3 oc = ray.origin - center;
-  double a = ray.direction.dot(ray.direction);
-  double b = oc.dot(ray.direction) * 2;
-  double c = oc.dot(oc) - radius * radius;
-  double discriminant = b * b - 4 * a * c;
-
-  return discriminant >= 0;
 }

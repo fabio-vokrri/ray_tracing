@@ -1,6 +1,7 @@
-import 'package:ray_tracing/main.dart';
-import 'package:ray_tracing/utility/color.dart';
-import 'package:ray_tracing/utility/vector.dart';
+import 'package:ray_tracing/geometry/color.dart';
+import 'package:ray_tracing/geometry/shapes/sphere.dart';
+import 'package:ray_tracing/geometry/vector.dart';
+import 'package:ray_tracing/utility/hit_record.dart';
 
 /// Ray type: represents a ray in space.
 class Ray {
@@ -26,9 +27,12 @@ class Ray {
 
   /// Returns the color of this ray.
   Color get color {
-    // if this ray hits the sphere, returns a blue-ish color
-    if (hitSphere(Point3(0, 0, -1), 0.5, this)) {
-      return Color.fromHex(0xFF780000);
+    Sphere sphere = Sphere(center: Point3(0, 0, -1), radius: 0.5);
+    var (bool didHit, HitRecord? hitRecord) =
+        sphere.hit(this, 0, double.infinity, null);
+    if (didHit) {
+      Vector3 n = (at(hitRecord!.t) - Vector3(0, 0, -1)).normalized;
+      return Color.fromDecimal(n.x + 1, n.y + 1, n.z + 1) * 0.5;
     }
 
     // calculates the sky color gradient

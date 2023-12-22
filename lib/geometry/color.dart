@@ -23,6 +23,10 @@ class Color {
     return Color._(r / 255, g / 255, b / 255);
   }
 
+  factory Color.fromDecimal(double r, double g, double b) {
+    return Color._(r, g, b);
+  }
+
   Color.white()
       : _r = 1,
         _g = 1,
