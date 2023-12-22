@@ -1,9 +1,20 @@
 import 'dart:io';
 
+import 'package:ray_tracing/geometry/color.dart';
 import 'package:ray_tracing/geometry/ray.dart';
+import 'package:ray_tracing/geometry/shapes/sphere.dart';
 import 'package:ray_tracing/geometry/vector.dart';
+import 'package:ray_tracing/utility/hit_record.dart';
+import 'package:ray_tracing/utility/hittable.dart';
+import 'package:ray_tracing/utility/hittable_list.dart';
+import 'package:ray_tracing/utility/interval.dart';
 
 void main(List<String> args) async {
+  // creates a new scene composed of two spheres, one on top of another.
+  HittableList world = HittableList();
+  world.add(Sphere(center: Point3(0, 0, -1), radius: 0.5));
+  world.add(Sphere(center: Point3(0, -100.5, -1), radius: 100));
+
   double aspectRatio = 16 / 9;
   int width = 1920;
   // calculates the image height base on the given aspect ratio and width
@@ -41,14 +52,34 @@ void main(List<String> args) async {
       Vector3 rayDirection = pixelCenter - cameraCenter;
 
       Ray ray = Ray(origin: cameraCenter, direction: rayDirection);
-      content.write(ray.color); // toString method automatically invoked
+      content.write(
+          getRayColor(ray, world)); // toString method automatically invoked
     }
   }
-
   stdout.write("\n\rDONE!\n");
 
   // creates the image output file
   File image = File("outputs/output_image.ppm");
   // and writes the content buffer in it
   await image.writeAsString(content.toString());
+}
+
+/// Returns the color of `ray` after hitting an object of `world`.
+Color getRayColor(Ray ray, Hittable world) {
+  var (
+    bool didHit,
+    HitRecord? hitRecord,
+  ) = world.hit(ray, Interval(0, double.infinity), null);
+
+  if (didHit) {
+    Vector3 normal = hitRecord!.normal;
+    return (Color.white() + Color.fromDecimal(normal.x, normal.y, normal.z)) *
+        0.5;
+  }
+
+  // calculates color gradient of the sky
+  Vector3 unitDirection = ray.direction.normalized;
+  double a = 0.5 * (unitDirection.y + 1);
+
+  return Color.white() * (1 - a) + Color.fromHex(0xFF8ECAE6) * a;
 }

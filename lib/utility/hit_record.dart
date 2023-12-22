@@ -1,15 +1,6 @@
 import 'package:ray_tracing/geometry/ray.dart';
 import 'package:ray_tracing/geometry/vector.dart';
 
-abstract class Hittable {
-  (bool didHit, HitRecord? hitRecord) hit(
-    Ray ray,
-    double rayTmin,
-    double rayTmax,
-    HitRecord? hitRecord,
-  );
-}
-
 class HitRecord {
   Point3 point;
   Vector3 normal;
@@ -23,7 +14,7 @@ class HitRecord {
     this.isFrontFace = false,
   });
 
-  /// Sets the hit record normal face.
+  /// Sets the hit record normal face to `outwardNormal` based on the `ray` direction.
   ///
   /// `outwardNormal` must have unit length.
   void setNormalFace(Ray ray, Vector3 outwardNormal) {

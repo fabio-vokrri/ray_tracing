@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:ray_tracing/geometry/ray.dart';
 import 'package:ray_tracing/geometry/vector.dart';
 import 'package:ray_tracing/utility/hit_record.dart';
+import 'package:ray_tracing/utility/hittable.dart';
+import 'package:ray_tracing/utility/interval.dart';
 
 /// Sphere type: represents a sphere in space
 class Sphere extends Hittable {
@@ -19,8 +21,7 @@ class Sphere extends Hittable {
   @override
   (bool, HitRecord?) hit(
     Ray ray,
-    double rayTmin,
-    double rayTmax,
+    Interval rayT,
     HitRecord? hitRecord,
   ) {
     Vector3 oc = ray.origin - _center;
@@ -34,12 +35,13 @@ class Sphere extends Hittable {
 
     // Finds the nearest root that lies in the acceptable range
     double root = (-halfB - sqrtDiscriminant) / a;
-    if (root <= rayTmin || root >= rayTmax) {
+    if (!rayT.surrounds(root)) {
       root = (-halfB + sqrtDiscriminant) / a;
-      if (root <= rayTmin || root >= rayTmax) {
+      if (!rayT.surrounds(root)) {
         return (false, null);
       }
     }
+
     // creates a new hit record because the ray did hit the sphere
     Vector3 outwardNormal = (ray.at(root) - _center) / _radius;
     HitRecord hitRecord = HitRecord(
