@@ -80,11 +80,15 @@ class Color {
   /// Returns a new color whose channels are generated from
   /// the division of every channel of this color by `t`.
   Color operator /(int t) {
-    double r = this.r / t;
-    double g = this.g / t;
-    double b = this.b / t;
+    if (t < 0) {
+      throw ArgumentError.value(t, null, "Cannot have negative r g b values");
+    }
 
-    return Color._(r, g, b);
+    if (t == 0) {
+      throw ArgumentError("Division by zero not supported");
+    }
+
+    return Color._(r / t, g / t, b / t);
   }
 
   /// Returns a new color whose channels are generated from
@@ -97,8 +101,12 @@ class Color {
   @override
   String toString() {
     Interval intensity = Interval(0, 0.999);
-    return "${intensity.clamp(r) * 256} "
-        "${intensity.clamp(g) * 256} "
-        "${intensity.clamp(b) * 256}\n";
+
+    // removed gamma correction
+    int r = (intensity.clamp(this.r) * 256).toInt();
+    int g = (intensity.clamp(this.g) * 256).toInt();
+    int b = (intensity.clamp(this.b) * 256).toInt();
+
+    return "$r $g $b\n";
   }
 }

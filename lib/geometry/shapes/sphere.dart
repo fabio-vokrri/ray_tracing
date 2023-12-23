@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:ray_tracing/geometry/ray.dart';
 import 'package:ray_tracing/geometry/vector.dart';
+import 'package:ray_tracing/materials/material.dart';
 import 'package:ray_tracing/utility/hit_record.dart';
 import 'package:ray_tracing/utility/hittable.dart';
 import 'package:ray_tracing/utility/interval.dart';
@@ -10,13 +11,16 @@ import 'package:ray_tracing/utility/interval.dart';
 class Sphere extends Hittable {
   final Point3 _center;
   final double _radius;
+  final Material _material;
 
   /// Creates a new sphere centered in `center` with the given `radius`.
   Sphere({
     required Point3 center,
     required double radius,
+    required Material material,
   })  : _center = center,
-        _radius = radius;
+        _radius = radius,
+        _material = material;
 
   /// Returns wether or not the given `ray` did hit this sphere.
   ///
@@ -48,12 +52,12 @@ class Sphere extends Hittable {
 
     // creates a new hit record because the ray did hit the sphere
     Vector3 outwardNormal = (ray.at(root) - _center) / _radius;
-    HitRecord hitRecord = HitRecord(
+    hitRecord = HitRecord(
       point: ray.at(root),
       normal: outwardNormal,
+      material: _material,
       t: root,
-    );
-    hitRecord.setNormalFace(ray, outwardNormal);
+    )..setNormalFace(ray, outwardNormal);
 
     return (true, hitRecord);
   }

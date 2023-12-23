@@ -16,7 +16,8 @@ class Camera {
   final double aspectRatio;
   final int imageWidth;
   final Color backgroundColor;
-  final int samplesPerPixel = 10;
+  final int samplesPerPixel;
+  final int maxDepth;
 
   late int _imageHeight;
   late Point3 _cameraCenter;
@@ -28,6 +29,8 @@ class Camera {
     this.aspectRatio = 16 / 9,
     this.imageWidth = 100,
     this.backgroundColor = const Color.black(),
+    this.samplesPerPixel = 10,
+    this.maxDepth = 10,
   }) {
     // calculates the image height base on the given aspect ratio and width
     _imageHeight = imageWidth ~/ aspectRatio;
@@ -71,7 +74,7 @@ class Camera {
         Color pixelColor = Color.black();
         for (int k = 0; k < samplesPerPixel; k++) {
           Ray ray = _getRay(i, j);
-          pixelColor += _getRayColor(ray, world);
+          pixelColor += _getRayColor(ray, maxDepth, world);
         }
         pixelColor *= scale;
         content.write(pixelColor);
@@ -86,26 +89,38 @@ class Camera {
   }
 
   /// Returns the color of `ray` after hitting an object of `world`.
-  Color _getRayColor(Ray ray, Hittable world) {
+  Color _getRayColor(Ray ray, int depth, Hittable world) {
+    if (depth <= 0) {
+      return Color.black();
+    }
+
     var (
       bool didHit,
       HitRecord? hitRecord,
-    ) = world.hit(ray, Interval(0, double.infinity), null);
+    ) = world.hit(ray, Interval(0.001, double.infinity), null);
 
     if (didHit) {
-      Vector3 direction = Vector3.randomOnHemisphere(hitRecord!.normal);
-      return _getRayColor(
-            Ray(origin: hitRecord.point, direction: direction),
-            world,
-          ) *
-          0.5;
+      var (
+        bool didScatter,
+        Color attenuation,
+        Ray scatteredRay,
+      ) = hitRecord!.material.scatter(ray, hitRecord);
+
+      if (didScatter) {
+        return _getRayColor(
+          scatteredRay,
+          depth - 1,
+          world,
+        ).multiplyBy(attenuation);
+      }
+
+      return Color.black();
     }
 
     // calculates color gradient of the sky
     Vector3 unitDirection = ray.direction.normalized;
     double a = 0.5 * (unitDirection.y + 1);
-
-    return Color.white() * (1 - a) + Color.fromHex(0xFF8ECAE6) * a;
+    return Color.white() * (1 - a) + Color.fromHex(0xff8ecae6) * a;
   }
 
   /// Returns the ray at the given pixel location, with a small random offset,

@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:ray_tracing/const.dart';
 import 'package:ray_tracing/extensions/random_double.dart';
 
 /// Vector3 type: represents a three-dimensional vector.
@@ -93,44 +94,34 @@ class Vector3 {
     return this / length;
   }
 
+  /// Returns true if the absolute value of every component
+  /// of this vector is smaller than 1e-8.
+  bool get isNearZero {
+    return _x.abs() < precision && _y.abs() < precision && _z.abs() < precision;
+  }
+
   /// Returns a new vector whose components are the sum between
   /// the components of this vector and the ones of `other`.
   Vector3 operator +(Vector3 other) {
-    return Vector3(
-      _x + other.x,
-      _y + other.y,
-      _z + other.z,
-    );
+    return Vector3(_x + other.x, _y + other.y, _z + other.z);
   }
 
   /// Returns a new vector whose components are the difference between
   /// the components of this vector and the ones of `other`.
   Vector3 operator -(Vector3 other) {
-    return Vector3(
-      _x - other.x,
-      _y - other.y,
-      _z - other.z,
-    );
+    return Vector3(_x - other.x, _y - other.y, _z - other.z);
   }
 
   /// Returns a new vector whose components are the negated version
   /// of the components of this vector.
   Vector3 operator -() {
-    return Vector3(
-      -_x,
-      -_y,
-      -_z,
-    );
+    return Vector3(-_x, -_y, -_z);
   }
 
   /// Returns a new vector whose components are generated from the product
   /// of every component of this vector by `t`.
   Vector3 operator *(num t) {
-    return Vector3(
-      _x * t,
-      _y * t,
-      _z * t,
-    );
+    return Vector3(_x * t, _y * t, _z * t);
   }
 
   /// Returns a new vector whose components are generated from the division
@@ -147,11 +138,7 @@ class Vector3 {
   /// Returns a new vector generated from the product of every component
   /// of this vector with the corresponding component of `other`.
   Vector3 multiplyBy(Vector3 other) {
-    return Vector3(
-      x * other.x,
-      y * other.y,
-      z * other.z,
-    );
+    return Vector3(x * other.x, y * other.y, z * other.z);
   }
 
   /// Returns a new vector whose components are generated from the cross product
@@ -167,6 +154,11 @@ class Vector3 {
   /// Returns the dot product between this vector and `other`.
   double dot(Vector3 other) {
     return _x * other.x + _y * other.y + _z * other.z;
+  }
+
+  /// Returns the direction a reflected ray on a smooth surface.
+  Vector3 reflect(Vector3 normal) {
+    return this - normal * (2 * dot(normal));
   }
 }
 
