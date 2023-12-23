@@ -1,3 +1,5 @@
+import 'package:ray_tracing/utility/interval.dart';
+
 /// Color type: represents a color
 class Color {
   final double _r;
@@ -19,18 +21,27 @@ class Color {
     return Color._(r, g, b);
   }
 
+  /// Creates a new color from the given `r`, `g`, `b` channels, ranging from 0 to 255, inclusive.
   factory Color.fromRGB(int r, int g, int b) {
     return Color._(r / 255, g / 255, b / 255);
   }
 
+  /// Creates a new color from the given `r`, `g`, `b` channels, ranging from 0 to 1, inclusive.
   factory Color.fromDecimal(double r, double g, double b) {
     return Color._(r, g, b);
   }
 
-  Color.white()
+  /// Creates a new white color.
+  const Color.white()
       : _r = 1,
         _g = 1,
         _b = 1;
+
+  /// Creates a black color.
+  const Color.black()
+      : _r = 0,
+        _g = 0,
+        _b = 0;
 
   double get r => _r;
   double get g => _g;
@@ -85,8 +96,9 @@ class Color {
   /// Returns a string representation of this color.
   @override
   String toString() {
-    return "${(r * 255.999).toInt()} "
-        "${(g * 255.999).toInt()} "
-        "${(b * 255.999).toInt()}\n";
+    Interval intensity = Interval(0, 0.999);
+    return "${intensity.clamp(r) * 256} "
+        "${intensity.clamp(g) * 256} "
+        "${intensity.clamp(b) * 256}\n";
   }
 }

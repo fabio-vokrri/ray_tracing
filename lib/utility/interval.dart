@@ -25,4 +25,12 @@ class Interval {
   bool surrounds(double x) {
     return x > min && x < max;
   }
+
+  /// Clamps the value of `x` between the max and the min value of this interval.
+  double clamp(double x) {
+    if (x < min) return min;
+    if (x > max) return max;
+
+    return x;
+  }
 }

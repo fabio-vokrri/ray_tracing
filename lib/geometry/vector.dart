@@ -1,20 +1,79 @@
 import 'dart:math';
 
+import 'package:ray_tracing/extensions/random_double.dart';
+
 /// Vector3 type: represents a three-dimensional vector.
 class Vector3 {
   final double _x;
   final double _y;
   final double _z;
 
+  /// Creates a new vector with the given `x`, `y` and `z` components.
   const Vector3(double x, double y, double z)
       : _x = x,
         _y = y,
         _z = z;
 
-  const Vector3.zero()
+  /// Creas a vector in the origin with length 0.
+  const Vector3.origin()
       : _x = 0,
         _y = 0,
         _z = 0;
+
+  /// Creates a vector with random components
+  /// ranging from 0 (inclusive) to 1 (exclusive).
+  factory Vector3.random() {
+    Random random = Random();
+
+    return Vector3(
+      random.nextDouble(),
+      random.nextDouble(),
+      random.nextDouble(),
+    );
+  }
+
+  /// Creates a vector with random components
+  /// ranging from `min` (inclusive) to `max` (exclusive).
+  factory Vector3.randomBetween(double min, double max) {
+    Random random = Random();
+
+    return Vector3(
+      random.nextDoubleBetween(min, max),
+      random.nextDoubleBetween(min, max),
+      random.nextDoubleBetween(min, max),
+    );
+  }
+
+  /// Creates a vector with random components
+  /// ranging from -1 (inclusive) and 1 (exclusive)
+  /// having squared length smaller than 1.
+  factory Vector3.randomInUnitSphere() {
+    Random random = Random();
+
+    Vector3 p;
+    while (true) {
+      p = Vector3(
+        random.nextDoubleBetween(-1, 1),
+        random.nextDoubleBetween(-1, 1),
+        random.nextDoubleBetween(-1, 1),
+      );
+
+      if (p.squaredLength < 1) {
+        return p;
+      }
+    }
+  }
+
+  /// Creates a random unit vector on the correct hemisphere
+  /// indicated by the given `normal` vector.
+  factory Vector3.randomOnHemisphere(Vector3 normal) {
+    Vector3 onUnitSphere = Vector3.random().normalized;
+    if (onUnitSphere.dot(normal) > 0) {
+      return onUnitSphere;
+    } else {
+      return -onUnitSphere;
+    }
+  }
 
   double get x => _x;
   double get y => _y;

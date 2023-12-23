@@ -1,12 +1,15 @@
 import 'package:ray_tracing/geometry/ray.dart';
 import 'package:ray_tracing/geometry/vector.dart';
 
+/// HitRecord type: represents the information generated from the impact
+/// of a ray into an object of the scene.
 class HitRecord {
   Point3 point;
   Vector3 normal;
   double t;
   bool isFrontFace;
 
+  /// creates a new hitRecord.
   HitRecord({
     required this.point,
     required this.normal,

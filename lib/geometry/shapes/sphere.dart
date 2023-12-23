@@ -6,11 +6,12 @@ import 'package:ray_tracing/utility/hit_record.dart';
 import 'package:ray_tracing/utility/hittable.dart';
 import 'package:ray_tracing/utility/interval.dart';
 
-/// Sphere type: represents a sphere in space
+/// Sphere type: represents a sphere in space.
 class Sphere extends Hittable {
   final Point3 _center;
   final double _radius;
 
+  /// Creates a new sphere centered in `center` with the given `radius`.
   Sphere({
     required Point3 center,
     required double radius,
@@ -18,6 +19,9 @@ class Sphere extends Hittable {
         _radius = radius;
 
   /// Returns wether or not the given `ray` did hit this sphere.
+  ///
+  /// If `ray` did hit the sphere at the given `rayT` interval returns a new HitRecord,
+  /// containing information about the hit.
   @override
   (bool, HitRecord?) hit(
     Ray ray,

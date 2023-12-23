@@ -5,8 +5,9 @@ class Ray {
   final Point3 _origin;
   final Vector3 _direction;
 
+  /// Creates a new ray that starts at `origin` in the given `direction`.
   const Ray({
-    required Vector3 origin,
+    required Point3 origin,
     required Vector3 direction,
   })  : _origin = origin,
         _direction = direction;
