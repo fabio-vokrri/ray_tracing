@@ -9,12 +9,6 @@ import 'package:ray_tracing/utility/interval.dart';
 class Scene extends Hittable {
   final List<Hittable> _objects = [];
 
-  Scene([Hittable? object]) {
-    if (object != null) {
-      _objects.add(object);
-    }
-  }
-
   /// clears the list of objects.
   void clear() => _objects.clear();
 

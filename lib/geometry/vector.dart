@@ -76,6 +76,26 @@ class Vector3 {
     }
   }
 
+  // Creates a vector with random x, y components
+  /// ranging from -1 (inclusive) and 1 (exclusive)
+  /// having squared length smaller than 1.
+  factory Vector3.randomInUnitDisk() {
+    Random random = Random();
+
+    Vector3 p;
+    while (true) {
+      p = Vector3(
+        random.nextDoubleBetween(-1, 1),
+        random.nextDoubleBetween(-1, 1),
+        0,
+      );
+
+      if (p.squaredLength < 1) {
+        return p;
+      }
+    }
+  }
+
   double get x => _x;
   double get y => _y;
   double get z => _z;

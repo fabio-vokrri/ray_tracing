@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:ray_tracing/extensions/random_double.dart';
 import 'package:ray_tracing/extensions/to_gamma.dart';
 import 'package:ray_tracing/utility/interval.dart';
 
@@ -30,6 +33,29 @@ class Color {
   /// Creates a new color from the given `r`, `g`, `b` channels, ranging from 0 to 1, inclusive.
   factory Color.fromDecimal(double r, double g, double b) {
     return Color._(r, g, b);
+  }
+
+  /// Creates a new color with random r, g, b channels.
+  factory Color.random() {
+    final Random random = Random();
+
+    return Color._(
+      random.nextDouble(),
+      random.nextDouble(),
+      random.nextDouble(),
+    );
+  }
+
+  /// Creates a new color with random r, g, b channels,
+  /// ranging from the given`min` and `max` values.
+  factory Color.randomBetween(double min, double max) {
+    final Random random = Random();
+
+    return Color._(
+      random.nextDoubleBetween(min, max),
+      random.nextDoubleBetween(min, max),
+      random.nextDoubleBetween(min, max),
+    );
   }
 
   /// Creates a new white color.

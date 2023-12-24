@@ -25,11 +25,15 @@ class Camera {
   final Point3 lookAt;
   final Vector3 cameraUpDirection;
 
+  final double defocusAngle;
+  final double focusDistance;
+
   late int _imageHeight;
   late Point3 _cameraCenter;
   late Point3 _firstPixelLocation;
   late Vector3 _pixelDeltaU, _pixelDeltaV;
   late Vector3 _u, _v, _w;
+  late Vector3 _defocusDiskU, _defocusDiskV;
 
   /// Creates a new camera.
   Camera({
@@ -43,6 +47,9 @@ class Camera {
     this.lookFrom = const Point3(0, 0, -1),
     this.lookAt = const Point3.origin(),
     this.cameraUpDirection = const Vector3(0, 1, 0),
+    //
+    this.defocusAngle = 0,
+    this.focusDistance = 10,
   }) {
     // calculates the image height base on the given aspect ratio and width
     _imageHeight = imageWidth ~/ aspectRatio;
@@ -51,9 +58,8 @@ class Camera {
     _cameraCenter = lookFrom;
 
     // camera settings
-    double focalLength = (lookFrom - lookAt).length;
     double theta = verticalFOV.toRadians;
-    double viewportHeight = 2 * tan(theta / 2) * focalLength;
+    double viewportHeight = 2 * tan(theta / 2) * focusDistance;
     double viewportWidth = viewportHeight * imageWidth / _imageHeight;
 
     // calculates the u, v, w unit basis vectors for the camera coordinate frame.
@@ -71,9 +77,13 @@ class Camera {
 
     // calculates the location of the upper left pixel
     Point3 viewportUpperLeftLocation =
-        _cameraCenter - (_w * focalLength) - viewportU / 2 - viewportV / 2;
+        _cameraCenter - (_w * focusDistance) - viewportU / 2 - viewportV / 2;
     _firstPixelLocation =
         viewportUpperLeftLocation + (_pixelDeltaU + _pixelDeltaV) * 0.5;
+
+    double defocusRadius = focusDistance * tan((defocusAngle / 2).toRadians);
+    _defocusDiskU = _u * defocusRadius;
+    _defocusDiskV = _v * defocusRadius;
   }
 
   /// Renders the given scene.
@@ -146,9 +156,10 @@ class Camera {
   Ray _getRay(int i, int j) {
     Point3 pixelCenter =
         _firstPixelLocation + (_pixelDeltaU * j) + (_pixelDeltaV * i);
-    Vector3 pixelSample = pixelCenter + _pixelCenterSquare();
+    Vector3 pixelSample = pixelCenter + _getPixelCenterSquare;
 
-    Point3 rayOrigin = _cameraCenter;
+    Point3 rayOrigin =
+        defocusAngle <= 0 ? _cameraCenter : _getDefocusDiskSample;
     Vector3 rayDirection = pixelSample - rayOrigin;
 
     return Ray(origin: rayOrigin, direction: rayDirection);
@@ -157,10 +168,18 @@ class Camera {
   /// Returns the offset used in the calculation of the color of a single pixel.
   ///
   /// Used for antialiasing.
-  Vector3 _pixelCenterSquare() {
+  Vector3 get _getPixelCenterSquare {
     var px = -0.5 + _random.nextDouble();
     var py = -0.5 + _random.nextDouble();
 
     return (_pixelDeltaU * px) + (_pixelDeltaV * py);
+  }
+
+  /// Returns a random point in the camera defocus disk.
+  ///
+  /// Used for focus blur.
+  Point3 get _getDefocusDiskSample {
+    Vector3 p = Vector3.randomInUnitDisk();
+    return _cameraCenter + (_defocusDiskU * p.x) + (_defocusDiskV * p.y);
   }
 }
