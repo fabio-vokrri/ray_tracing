@@ -6,10 +6,10 @@ import 'package:ray_tracing/utility/interval.dart';
 /// HittableList type: represents a list of hittable objects.
 ///
 /// It contains all the object te scene is composed of.
-class HittableList extends Hittable {
+class Scene extends Hittable {
   final List<Hittable> _objects = [];
 
-  HittableList([Hittable? object]) {
+  Scene([Hittable? object]) {
     if (object != null) {
       _objects.add(object);
     }

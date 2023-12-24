@@ -156,9 +156,19 @@ class Vector3 {
     return _x * other.x + _y * other.y + _z * other.z;
   }
 
-  /// Returns the direction a reflected ray on a smooth surface.
+  /// Returns the direction a reflected ray on a surface.
   Vector3 reflect(Vector3 normal) {
     return this - normal * (2 * dot(normal));
+  }
+
+  /// Returns the direction a refracted ray on a surface.
+  Vector3 refract(Vector3 normal, double refractionIndex) {
+    double cosTheta = min((-this).dot(normal), 1);
+    Vector3 rOutPerpendicular = (this + normal * cosTheta) * refractionIndex;
+    Vector3 rOutParallel =
+        normal * -sqrt((1 - rOutPerpendicular.squaredLength).abs());
+
+    return rOutPerpendicular + rOutParallel;
   }
 }
 

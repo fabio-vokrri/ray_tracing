@@ -1,3 +1,4 @@
+import 'package:ray_tracing/extensions/to_gamma.dart';
 import 'package:ray_tracing/utility/interval.dart';
 
 /// Color type: represents a color
@@ -50,21 +51,13 @@ class Color {
   /// Returns a new color whose channels are the sum between
   /// the channels of this color and the ones of `other`.
   Color operator +(Color other) {
-    return Color._(
-      _r + other.r,
-      _g + other.g,
-      _b + other.b,
-    );
+    return Color._(_r + other.r, _g + other.g, _b + other.b);
   }
 
   /// Returns a new color whose channels are the difference between
   /// the channels of this color and the ones of `other`.
   Color operator -(Color other) {
-    double r = this.r - other.r;
-    double g = this.g - other.g;
-    double b = this.b - other.b;
-
-    return Color._(r, g, b);
+    return Color._(r - other.r, g - other.g, b - other.b);
   }
 
   /// Returns a new color whose channels are generated from
@@ -103,9 +96,9 @@ class Color {
     Interval intensity = Interval(0, 0.999);
 
     // removed gamma correction
-    int r = (intensity.clamp(this.r) * 256).toInt();
-    int g = (intensity.clamp(this.g) * 256).toInt();
-    int b = (intensity.clamp(this.b) * 256).toInt();
+    int r = (intensity.clamp(this.r.toGamma) * 256).toInt();
+    int g = (intensity.clamp(this.g.toGamma) * 256).toInt();
+    int b = (intensity.clamp(this.b.toGamma) * 256).toInt();
 
     return "$r $g $b\n";
   }
