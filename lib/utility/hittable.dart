@@ -1,4 +1,5 @@
 import 'package:ray_tracing/geometry/ray.dart';
+import 'package:ray_tracing/utility/aabb.dart';
 import 'package:ray_tracing/utility/hit_record.dart';
 import 'package:ray_tracing/utility/interval.dart';
 
@@ -9,4 +10,6 @@ abstract class Hittable {
     Interval rayT,
     HitRecord? hitRecord,
   );
+
+  AABB get boundingBox;
 }

@@ -1,4 +1,5 @@
 import 'package:ray_tracing/geometry/ray.dart';
+import 'package:ray_tracing/utility/aabb.dart';
 import 'package:ray_tracing/utility/hit_record.dart';
 import 'package:ray_tracing/utility/hittable.dart';
 import 'package:ray_tracing/utility/interval.dart';
@@ -8,6 +9,7 @@ import 'package:ray_tracing/utility/interval.dart';
 /// It contains all the object te scene is composed of.
 class Scene extends Hittable {
   final List<Hittable> _objects = [];
+  AABB _boundingBox = AABB();
 
   /// clears the list of objects.
   void clear() => _objects.clear();
@@ -15,6 +17,7 @@ class Scene extends Hittable {
   /// adds `object` to the list of objects.
   void add(Hittable object) {
     _objects.add(object);
+    _boundingBox = AABB.fromBoxes(_boundingBox, object.boundingBox);
   }
 
   @override
@@ -46,4 +49,7 @@ class Scene extends Hittable {
 
     return (anythingWasHit, temporaryRecord);
   }
+
+  @override
+  AABB get boundingBox => _boundingBox;
 }

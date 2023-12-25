@@ -155,6 +155,19 @@ class Vector3 {
     return this * (1 / t);
   }
 
+  /// Returns the `i`-th axis of this vector.
+  ///
+  /// Throws Argument error if `i` is out of range.
+  double operator [](int i) {
+    if (i < 0 || i > 3) {
+      throw ArgumentError.value(i, null, "Index out of bounds");
+    }
+
+    if (i == 0) return _x;
+    if (i == 1) return _y;
+    return _z;
+  }
+
   /// Returns a new vector generated from the product of every component
   /// of this vector with the corresponding component of `other`.
   Vector3 multiplyBy(Vector3 other) {

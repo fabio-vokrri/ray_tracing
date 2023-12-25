@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:ray_tracing/geometry/ray.dart';
 import 'package:ray_tracing/geometry/vector.dart';
 import 'package:ray_tracing/materials/material.dart';
+import 'package:ray_tracing/utility/aabb.dart';
 import 'package:ray_tracing/utility/hit_record.dart';
 import 'package:ray_tracing/utility/hittable.dart';
 import 'package:ray_tracing/utility/interval.dart';
@@ -13,6 +14,7 @@ class Sphere extends Hittable {
   final bool _isMoving;
   final double _radius;
   final Material _material;
+  late final AABB _boundingBox;
   late final Vector3? _centerDirection;
 
   /// Creates a new stationary sphere centered in `center` with the given `radius`.
@@ -24,7 +26,14 @@ class Sphere extends Hittable {
         _radius = radius,
         _material = material,
         _isMoving = false,
-        _centerDirection = null;
+        _centerDirection = null //
+  {
+    Vector3 radiusVector = Vector3(radius, radius, radius);
+    _boundingBox = AABB.fromPoints(
+      _center - radiusVector,
+      _center + radiusVector,
+    );
+  }
 
   /// Creates a new moving sphere centered in `center` with the given `radius`.
   Sphere.moving({
@@ -36,7 +45,13 @@ class Sphere extends Hittable {
         _radius = radius,
         _material = material,
         _isMoving = true,
-        _centerDirection = center2 - center1;
+        _centerDirection = center2 - center1 //
+  {
+    Vector3 radiusVector = Vector3(radius, radius, radius);
+    AABB box1 = AABB.fromPoints(center1 - radiusVector, center1 + radiusVector);
+    AABB box2 = AABB.fromPoints(center2 - radiusVector, center2 + radiusVector);
+    _boundingBox = AABB.fromBoxes(box1, box2);
+  }
 
   /// Returns wether or not the given `ray` did hit this sphere.
   ///
@@ -91,4 +106,8 @@ class Sphere extends Hittable {
 
     return _center;
   }
+
+  /// Returns the bounding box of this sphere.
+  @override
+  AABB get boundingBox => _boundingBox;
 }
