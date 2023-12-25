@@ -17,6 +17,7 @@ class Metal extends Material {
     Ray scatteredRay = Ray(
       origin: record.point,
       direction: reflected + Vector3.random().normalized * _fuzz,
+      time: ray.time,
     );
 
     return (

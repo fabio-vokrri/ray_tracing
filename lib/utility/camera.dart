@@ -162,7 +162,11 @@ class Camera {
         defocusAngle <= 0 ? _cameraCenter : _getDefocusDiskSample;
     Vector3 rayDirection = pixelSample - rayOrigin;
 
-    return Ray(origin: rayOrigin, direction: rayDirection);
+    return Ray(
+      origin: rayOrigin,
+      direction: rayDirection,
+      time: _random.nextDouble(),
+    );
   }
 
   /// Returns the offset used in the calculation of the color of a single pixel.

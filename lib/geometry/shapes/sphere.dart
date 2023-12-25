@@ -10,17 +10,33 @@ import 'package:ray_tracing/utility/interval.dart';
 /// Sphere type: represents a sphere in space.
 class Sphere extends Hittable {
   final Point3 _center;
+  final bool _isMoving;
   final double _radius;
   final Material _material;
+  late final Vector3? _centerDirection;
 
-  /// Creates a new sphere centered in `center` with the given `radius`.
+  /// Creates a new stationary sphere centered in `center` with the given `radius`.
   Sphere({
     required Point3 center,
     required double radius,
     required Material material,
   })  : _center = center,
         _radius = radius,
-        _material = material;
+        _material = material,
+        _isMoving = false,
+        _centerDirection = null;
+
+  /// Creates a new moving sphere centered in `center` with the given `radius`.
+  Sphere.moving({
+    required Point3 center1,
+    required Point3 center2,
+    required double radius,
+    required Material material,
+  })  : _center = center1,
+        _radius = radius,
+        _material = material,
+        _isMoving = true,
+        _centerDirection = center2 - center1;
 
   /// Returns wether or not the given `ray` did hit this sphere.
   ///
@@ -32,7 +48,8 @@ class Sphere extends Hittable {
     Interval rayT,
     HitRecord? hitRecord,
   ) {
-    Vector3 oc = ray.origin - _center;
+    Point3 center = _getCenterAt(ray.time);
+    Vector3 oc = ray.origin - center;
     double a = ray.direction.squaredLength;
     double halfB = oc.dot(ray.direction);
     double c = oc.squaredLength - _radius * _radius;
@@ -51,7 +68,7 @@ class Sphere extends Hittable {
     }
 
     // creates a new hit record because the ray did hit the sphere
-    Vector3 outwardNormal = (ray.at(root) - _center) / _radius;
+    Vector3 outwardNormal = (ray.at(root) - center) / _radius;
     hitRecord = HitRecord(
       point: ray.at(root),
       normal: outwardNormal,
@@ -60,5 +77,18 @@ class Sphere extends Hittable {
     )..setNormalFace(ray, outwardNormal);
 
     return (true, hitRecord);
+  }
+
+  /// Returns the center of this sphere at the given `time`.
+  Point3 _getCenterAt(double time) {
+    // Linearly interpolates from center1 to center2 according to time,
+    // where t=0 yields center1, and t=1 yields center2.
+    // Only if _isMoving flag is set to true
+    if (_isMoving) {
+      return _center + _centerDirection! * time;
+      //               ^ if the sphere is moving, _centerDirection is not null
+    }
+
+    return _center;
   }
 }

@@ -5,7 +5,7 @@ import 'package:ray_tracing/geometry/color.dart';
 import 'package:ray_tracing/geometry/shapes/sphere.dart';
 import 'package:ray_tracing/geometry/vector.dart';
 import 'package:ray_tracing/materials/dielectric.dart';
-import 'package:ray_tracing/materials/lambertial.dart';
+import 'package:ray_tracing/materials/lambertian.dart';
 import 'package:ray_tracing/materials/material.dart';
 import 'package:ray_tracing/materials/metal.dart';
 import 'package:ray_tracing/utility/camera.dart';
@@ -14,11 +14,11 @@ import 'package:ray_tracing/utility/scene.dart';
 void main(List<String> args) async {
   // creates the camera and renders the scene.
   Camera camera = Camera(
-    imageWidth: 100,
-    samplesPerPixel: 100,
-    maxDepth: 50,
+    imageWidth: 1920,
+    samplesPerPixel: 500,
+    maxDepth: 100,
     verticalFOV: 20,
-    lookFrom: Point3(13, 2, 3),
+    lookFrom: Point3(13, 5, 3),
     defocusAngle: 0.6,
     focusDistance: 10,
   );

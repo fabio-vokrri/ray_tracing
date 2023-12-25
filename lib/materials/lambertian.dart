@@ -18,6 +18,7 @@ class Lambertian extends Material {
     Ray scatteredRay = Ray(
       origin: record.point,
       direction: scatterDirection,
+      time: ray.time,
     );
 
     return (true, _albedo, scatteredRay);
