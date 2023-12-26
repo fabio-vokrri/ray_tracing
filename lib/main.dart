@@ -8,13 +8,14 @@ import 'package:ray_tracing/materials/dielectric.dart';
 import 'package:ray_tracing/materials/lambertian.dart';
 import 'package:ray_tracing/materials/material.dart';
 import 'package:ray_tracing/materials/metal.dart';
+import 'package:ray_tracing/utility/bvh_node.dart';
 import 'package:ray_tracing/utility/camera.dart';
 import 'package:ray_tracing/utility/scene.dart';
 
 void main(List<String> args) async {
   // creates the camera and renders the scene.
   Camera camera = Camera(
-    imageWidth: 1920,
+    imageWidth: 100,
     samplesPerPixel: 500,
     maxDepth: 100,
     verticalFOV: 20,
@@ -23,7 +24,8 @@ void main(List<String> args) async {
     focusDistance: 10,
   );
 
-  camera.render(scene4);
+  Scene scene = Scene(BVHNode.fromList(scene4));
+  camera.render(scene);
 }
 
 Scene get scene1 {
