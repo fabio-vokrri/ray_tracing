@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:ray_tracing/geometry/ray.dart';
 import 'package:ray_tracing/utility/aabb.dart';
 import 'package:ray_tracing/utility/hit_record.dart';
@@ -8,18 +10,18 @@ import 'package:ray_tracing/utility/interval.dart';
 ///
 /// It contains all the object te scene is composed of.
 class Scene extends Hittable {
-  List<Hittable> objects = [];
+  final List<Hittable> _objects = [];
   AABB _boundingBox = AABB();
 
   /// Creates a new Scene with the given `object`.
   Scene([Hittable? object]);
 
   /// clears the list of objects.
-  void clear() => objects.clear();
+  void clear() => _objects.clear();
 
   /// adds `object` to the list of objects.
   void add(Hittable object) {
-    objects.add(object);
+    _objects.add(object);
     _boundingBox = AABB.fromBoxes(_boundingBox, object.boundingBox);
   }
 
@@ -34,7 +36,7 @@ class Scene extends Hittable {
     double closest = rayT.max;
 
     // checks if the ray intersects any of the objects in the list
-    for (Hittable object in objects) {
+    for (Hittable object in _objects) {
       var (
         bool didHit,
         HitRecord? thisRecord,
@@ -55,4 +57,8 @@ class Scene extends Hittable {
 
   @override
   AABB get boundingBox => _boundingBox;
+
+  UnmodifiableListView<Hittable> get objects => UnmodifiableListView(_objects);
 }
+
+typedef HittableList = Scene;

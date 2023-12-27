@@ -2,20 +2,20 @@ import 'dart:math';
 
 import 'package:ray_tracing/extensions/random_double.dart';
 import 'package:ray_tracing/geometry/color.dart';
-import 'package:ray_tracing/geometry/shapes/sphere.dart';
+import 'package:ray_tracing/objects/shapes/sphere.dart';
 import 'package:ray_tracing/geometry/vector.dart';
-import 'package:ray_tracing/materials/dielectric.dart';
-import 'package:ray_tracing/materials/lambertian.dart';
-import 'package:ray_tracing/materials/material.dart';
-import 'package:ray_tracing/materials/metal.dart';
-import 'package:ray_tracing/utility/bvh_node.dart';
+import 'package:ray_tracing/objects/materials/dielectric.dart';
+import 'package:ray_tracing/objects/materials/lambertian.dart';
+import 'package:ray_tracing/objects/materials/material.dart';
+import 'package:ray_tracing/objects/materials/metal.dart';
+import 'package:ray_tracing/objects/textures/checker.dart';
 import 'package:ray_tracing/utility/camera.dart';
 import 'package:ray_tracing/utility/scene.dart';
 
 void main(List<String> args) async {
   // creates the camera and renders the scene.
   Camera camera = Camera(
-    imageWidth: 100,
+    imageWidth: 450,
     samplesPerPixel: 500,
     maxDepth: 100,
     verticalFOV: 20,
@@ -24,8 +24,8 @@ void main(List<String> args) async {
     focusDistance: 10,
   );
 
-  Scene scene = Scene(BVHNode.fromList(scene4));
-  camera.render(scene);
+  // Scene scene = Scene(BVHNode.fromList(scene2));
+  camera.render(scene4);
 }
 
 Scene get scene1 {
@@ -125,7 +125,13 @@ Scene get scene4 {
   Random random = Random();
   Scene scene = Scene();
 
-  Material groundMaterial = Lambertian(albedo: Color.fromHex(0xffa7c957));
+  Material groundMaterial = Lambertian.fromTexture(
+    Checker.fromColors(
+      0.32,
+      Color.white(),
+      Color.black(),
+    ),
+  );
   scene.add(
     Sphere(center: Point3(0, -1000, 0), radius: 1000, material: groundMaterial),
   );

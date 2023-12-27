@@ -91,8 +91,8 @@ class Camera {
     // creates a buffer that will be written in the output image file (PPM format)
     StringBuffer content = StringBuffer("P3\n$imageWidth $_imageHeight\n255\n");
 
-    // color scaler, used for antu aliasing
-    double scale = 1 / samplesPerPixel;
+    // color scaler, used for anty aliasing
+    double colorScale = 1 / samplesPerPixel;
     for (int i = 0; i < _imageHeight; i++) {
       stdout.write("\rLines remaining: ${_imageHeight - i}\n");
       for (int j = 0; j < imageWidth; j++) {
@@ -101,7 +101,7 @@ class Camera {
           Ray ray = _getRay(i, j);
           pixelColor += _getRayColor(ray, maxDepth, world);
         }
-        pixelColor *= scale;
+        pixelColor *= colorScale;
         content.write(pixelColor);
       }
     }

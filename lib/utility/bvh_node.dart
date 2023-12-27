@@ -13,6 +13,9 @@ class BVHNode extends Hittable {
   late AABB _boundingBox;
 
   BVHNode(List<Hittable> objects, int start, int end) {
+    // gets a modifiable copy of the object list
+    List<Hittable> objectsCopy = List.from(objects);
+
     int axis = Random().nextInt(3);
     var comparator = axis == 0
         ? _compareBoxX
@@ -22,32 +25,30 @@ class BVHNode extends Hittable {
 
     int span = end - start;
     if (span == 1) {
-      _left = _right = objects[start];
+      _left = objectsCopy[start];
+      _right = objectsCopy[start];
     } else if (span == 2) {
-      if (comparator(objects[start], objects[start + 1]) < 0) {
-        _left = objects[start];
-        _right = objects[start + 1];
+      if (comparator(objectsCopy[start], objectsCopy[start + 1]) < 0) {
+        _left = objectsCopy[start];
+        _right = objectsCopy[start + 1];
       } else {
-        _left = objects[start + 1];
-        _right = objects[start];
+        _left = objectsCopy[start + 1];
+        _right = objectsCopy[start];
       }
     } else {
-      objects.sort(comparator);
+      objectsCopy.sort(comparator);
 
       int middle = start + span ~/ 2;
-      _left = BVHNode(objects, start, middle);
-      _right = BVHNode(objects, middle, end);
+      _left = BVHNode(objectsCopy, start, middle);
+      _right = BVHNode(objectsCopy, middle, end);
     }
 
     _boundingBox = AABB.fromBoxes(_left.boundingBox, _right.boundingBox);
   }
 
-  factory BVHNode.fromList(Scene list) {
+  factory BVHNode.fromList(HittableList list) {
     return BVHNode(list.objects, 0, list.objects.length);
   }
-
-  @override
-  AABB get boundingBox => _boundingBox;
 
   @override
   (bool, HitRecord?) hit(Ray ray, Interval rayT, HitRecord? hitRecord) {
@@ -76,6 +77,9 @@ class BVHNode extends Hittable {
 
     return (didHitLeft || didHitRight, hitRecord);
   }
+
+  @override
+  AABB get boundingBox => _boundingBox;
 
   int _compareBox(Hittable a, Hittable b, int axisIndex) {
     return a.boundingBox[axisIndex].min < b.boundingBox[axisIndex].min ? -1 : 1;

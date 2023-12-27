@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:ray_tracing/geometry/ray.dart';
 import 'package:ray_tracing/geometry/vector.dart';
-import 'package:ray_tracing/materials/material.dart';
+import 'package:ray_tracing/objects/materials/material.dart';
 import 'package:ray_tracing/utility/aabb.dart';
 import 'package:ray_tracing/utility/hit_record.dart';
 import 'package:ray_tracing/utility/hittable.dart';
@@ -84,9 +84,12 @@ class Sphere extends Hittable {
 
     // creates a new hit record because the ray did hit the sphere
     Vector3 outwardNormal = (ray.at(root) - center) / _radius;
+    var (double u, double v) = _getUV(outwardNormal);
     hitRecord = HitRecord(
       point: ray.at(root),
       normal: outwardNormal,
+      u: u,
+      v: v,
       material: _material,
       t: root,
     )..setNormalFace(ray, outwardNormal);
@@ -105,6 +108,13 @@ class Sphere extends Hittable {
     }
 
     return _center;
+  }
+
+  (double u, double v) _getUV(Point3 point) {
+    double theta = acos(-point.y);
+    double phi = atan2(-point.z, point.x) + pi;
+
+    return (phi / (2 * pi), theta / pi);
   }
 
   /// Returns the bounding box of this sphere.

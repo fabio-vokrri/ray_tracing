@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:ray_tracing/geometry/color.dart';
 import 'package:ray_tracing/geometry/ray.dart';
 import 'package:ray_tracing/geometry/vector.dart';
-import 'package:ray_tracing/materials/material.dart';
+import 'package:ray_tracing/objects/materials/material.dart';
 import 'package:ray_tracing/utility/hit_record.dart';
 
 class Dielectric extends Material {
