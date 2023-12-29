@@ -2,30 +2,33 @@ import 'dart:math';
 
 import 'package:ray_tracing/extensions/random_double.dart';
 import 'package:ray_tracing/geometry/color.dart';
-import 'package:ray_tracing/objects/shapes/sphere.dart';
 import 'package:ray_tracing/geometry/vector.dart';
 import 'package:ray_tracing/objects/materials/dielectric.dart';
 import 'package:ray_tracing/objects/materials/lambertian.dart';
 import 'package:ray_tracing/objects/materials/material.dart';
 import 'package:ray_tracing/objects/materials/metal.dart';
+import 'package:ray_tracing/objects/shapes/sphere.dart';
 import 'package:ray_tracing/objects/textures/checker.dart';
+import 'package:ray_tracing/objects/textures/image.dart';
 import 'package:ray_tracing/utility/camera.dart';
 import 'package:ray_tracing/utility/scene.dart';
 
 void main(List<String> args) async {
   // creates the camera and renders the scene.
   Camera camera = Camera(
+    aspectRatio: 16 / 9,
     imageWidth: 450,
-    samplesPerPixel: 500,
-    maxDepth: 100,
-    verticalFOV: 20,
-    lookFrom: Point3(13, 5, 3),
-    defocusAngle: 0.6,
-    focusDistance: 10,
+    samplesPerPixel: 50,
+    maxDepth: 10,
+    backgroundColor: Color.black(),
+    verticalFOV: 80,
+    lookAt: Point3.origin(),
+    lookFrom: Point3(0, 10, 0),
+    defocusAngle: 0,
   );
 
   // Scene scene = Scene(BVHNode.fromList(scene2));
-  camera.render(scene4);
+  camera.render(scene5);
 }
 
 Scene get scene1 {
@@ -194,5 +197,20 @@ Scene get scene4 {
     ),
   );
 
+  return scene;
+}
+
+Scene get scene5 {
+  Scene scene = Scene();
+
+  scene.add(
+    Sphere(
+      center: Vector3.origin(),
+      radius: 2,
+      material: Lambertian.fromTexture(
+        Image(r"assets\earthmap.jpg"),
+      ),
+    ),
+  );
   return scene;
 }
