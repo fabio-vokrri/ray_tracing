@@ -26,6 +26,17 @@ class AABB {
         y = Interval.fromIntervals(box1.y, box2.y),
         z = Interval.fromIntervals(box1.z, box2.z);
 
+  /// Returns a new AABB that has no side narrower than 0.0001,
+  /// expanding the required side.
+  AABB pad() {
+    double delta = 0.0001;
+    Interval newX = x.size >= delta ? x : x.expand(delta);
+    Interval newY = y.size >= delta ? y : y.expand(delta);
+    Interval newZ = z.size >= delta ? z : z.expand(delta);
+
+    return AABB(x: newX, y: newY, z: newZ);
+  }
+
   /// Returns the `i`-th axis' interval of this aabb.
   ///
   /// Throws Argument error if `i` is out of range.
@@ -39,24 +50,26 @@ class AABB {
     return z;
   }
 
+  /// Adds the given offset to this bounding box.
+  AABB operator +(Vector3 offset) {
+    return AABB(x: x + offset.x, y: y + offset.y, z: z + offset.z);
+  }
+
   bool hit(Ray ray, Interval rayT) {
-    for (int i = 0; i < 3; i++) {
-      double t0 = min(
-        (this[i].min - ray.origin[i]) / ray.direction[i],
-        (this[i].max - ray.origin[i]) / ray.direction[i],
-      );
+    for (int axis = 0; axis < 3; axis++) {
+      double inverseDirection = 1 / ray.direction[axis];
+      double origin = ray.origin[axis];
 
-      double t1 = max(
-        (this[i].min - ray.origin[i]) / ray.direction[i],
-        (this[i].max - ray.origin[i]) / ray.direction[i],
-      );
+      double t0 = (this[axis].min - origin) * inverseDirection;
+      double t1 = (this[axis].max - origin) * inverseDirection;
 
-      rayT = rayT.copyWith(min: max(t0, rayT.min), max: min(t1, rayT.max));
+      if (inverseDirection < 0) [t0, t1] = [t1, t0];
+      if (t0 > rayT.min) rayT = rayT.copyWith(min: t0);
+      if (t1 < rayT.max) rayT = rayT.copyWith(max: t1);
 
-      if (rayT.max <= rayT.min) {
-        return false;
-      }
+      if (rayT.max <= rayT.min) return false;
     }
+
     return true;
   }
 }

@@ -25,11 +25,11 @@ class Image extends Texture {
 
     image_lib.Pixel pixel = _image.getPixel(i, j);
 
-    double colorScale = 1 / 255;
-    return Color.fromDecimal(
-      pixel.r * colorScale,
-      pixel.g * colorScale,
-      pixel.b * colorScale,
+    // double colorScale = 1 / 255;
+    return Color.fromRGB(
+      pixel.r as int,
+      pixel.g as int,
+      pixel.b as int,
     );
   }
 }

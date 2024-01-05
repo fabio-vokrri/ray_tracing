@@ -12,6 +12,7 @@ class BVHNode extends Hittable {
   late Hittable _right;
   late AABB _boundingBox;
 
+  /// Creates a new BVH node from the given `objects` starting from `start` until `end`.
   BVHNode(List<Hittable> objects, int start, int end) {
     // gets a modifiable copy of the object list
     List<Hittable> objectsCopy = List.from(objects);
@@ -46,6 +47,7 @@ class BVHNode extends Hittable {
     _boundingBox = AABB.fromBoxes(_left.boundingBox, _right.boundingBox);
   }
 
+  /// Creates a new BVH node from the given `list`.
   factory BVHNode.fromList(HittableList list) {
     return BVHNode(list.objects, 0, list.objects.length);
   }
@@ -69,7 +71,7 @@ class BVHNode extends Hittable {
       ray,
       Interval(
         rayT.min,
-        didHitLeft ? leftHitRecord!.t : rayT.max,
+        didHitLeft ? hitRecord!.t : rayT.max,
       ),
       hitRecord,
     );
@@ -81,6 +83,8 @@ class BVHNode extends Hittable {
   @override
   AABB get boundingBox => _boundingBox;
 
+  /// Returns 1 if the minimum end of the first bounding box at the given `axisIndex`
+  /// is grater the second one.
   int _compareBox(Hittable a, Hittable b, int axisIndex) {
     return a.boundingBox[axisIndex].min < b.boundingBox[axisIndex].min ? -1 : 1;
   }

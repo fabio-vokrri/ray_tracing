@@ -17,13 +17,12 @@ void main(List<String> args) async {
   // creates the camera and renders the scene.
   Camera camera = Camera(
     aspectRatio: 16 / 9,
-    imageWidth: 450,
-    samplesPerPixel: 50,
-    maxDepth: 10,
+    imageWidth: 1920,
+    samplesPerPixel: 100,
+    maxDepth: 50,
     backgroundColor: Color.black(),
-    verticalFOV: 80,
     lookAt: Point3.origin(),
-    lookFrom: Point3(0, 10, 0),
+    lookFrom: Point3(6, 2, -1),
     defocusAngle: 0,
   );
 
@@ -36,7 +35,7 @@ Scene get scene1 {
 
   scene.add(
     Sphere(
-      center: Point3(0, -100.5, -1),
+      center: Point3(0, -100.5, 0),
       radius: 100,
       material: Lambertian(
         albedo: Color.fromHex(0xff386641),
@@ -46,7 +45,7 @@ Scene get scene1 {
 
   scene.add(
     Sphere(
-      center: Point3(0, 0, -1),
+      center: Point3.origin(),
       radius: 0.5,
       material: Lambertian(
         albedo: Color.fromHex(0xffc1121f),
@@ -208,7 +207,7 @@ Scene get scene5 {
       center: Vector3.origin(),
       radius: 2,
       material: Lambertian.fromTexture(
-        Image(r"assets\earthmap.jpg"),
+        Image(r"assets\earth_texture.jpg"),
       ),
     ),
   );

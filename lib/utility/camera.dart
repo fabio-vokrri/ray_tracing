@@ -37,17 +37,18 @@ class Camera {
 
   /// Creates a new camera.
   Camera({
+    // camera settings
     this.aspectRatio = 16 / 9,
     this.imageWidth = 100,
     this.backgroundColor = const Color.black(),
     this.samplesPerPixel = 10,
     this.maxDepth = 10,
-    //
+    // view settings
     this.verticalFOV = 90,
     this.lookFrom = const Point3(0, 0, -1),
     this.lookAt = const Point3.origin(),
     this.cameraUpDirection = const Vector3(0, 1, 0),
-    //
+    // lens settings
     this.defocusAngle = 0,
     this.focusDistance = 10,
   }) {
@@ -87,7 +88,7 @@ class Camera {
   }
 
   /// Renders the given scene.
-  void render(Scene world) async {
+  void render(Scene scene) async {
     // creates a buffer that will be written in the output image file (PPM format)
     StringBuffer content = StringBuffer("P3\n$imageWidth $_imageHeight\n255\n");
 
@@ -99,9 +100,9 @@ class Camera {
         Color pixelColor = Color.black();
         for (int k = 0; k < samplesPerPixel; k++) {
           Ray ray = _getRay(i, j);
-          pixelColor += _getRayColor(ray, maxDepth, world);
+          pixelColor += _getRayColor(ray, maxDepth, scene);
         }
-        pixelColor *= colorScale;
+        pixelColor *= colorScale; //! IMPORTANT. DO NOT DELETE.
         content.write(pixelColor);
       }
     }

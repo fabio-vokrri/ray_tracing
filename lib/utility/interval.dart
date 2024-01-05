@@ -56,4 +56,9 @@ class Interval {
   double get size {
     return max - min;
   }
+
+  /// Adds the given `displacement` to the minimum and maximum of this interval.
+  Interval operator +(num displacement) {
+    return Interval(min + displacement, max + displacement);
+  }
 }
