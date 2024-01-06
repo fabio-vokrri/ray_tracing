@@ -10,24 +10,21 @@ import 'package:ray_tracing/objects/materials/metal.dart';
 import 'package:ray_tracing/objects/shapes/sphere.dart';
 import 'package:ray_tracing/objects/textures/checker.dart';
 import 'package:ray_tracing/objects/textures/image.dart';
+import 'package:ray_tracing/objects/textures/noise.dart';
 import 'package:ray_tracing/utility/camera.dart';
 import 'package:ray_tracing/utility/scene.dart';
 
 void main(List<String> args) async {
   // creates the camera and renders the scene.
   Camera camera = Camera(
-    aspectRatio: 16 / 9,
-    imageWidth: 1920,
+    aspectRatio: 1,
+    imageWidth: 720,
     samplesPerPixel: 100,
     maxDepth: 50,
-    backgroundColor: Color.black(),
-    lookAt: Point3.origin(),
-    lookFrom: Point3(6, 2, -1),
-    defocusAngle: 0,
+    lookFrom: Point3(3, 2, -1),
   );
 
-  // Scene scene = Scene(BVHNode.fromList(scene2));
-  camera.render(scene5);
+  camera.render(scene6);
 }
 
 Scene get scene1 {
@@ -211,5 +208,26 @@ Scene get scene5 {
       ),
     ),
   );
+  return scene;
+}
+
+Scene get scene6 {
+  Scene scene = Scene();
+  scene.add(
+    Sphere(
+      center: Point3.origin(),
+      radius: 0.5,
+      material: Lambertian.fromTexture(Noise()),
+    ),
+  );
+
+  scene.add(
+    Sphere(
+      center: Point3(0, -100.5, 0),
+      radius: 100,
+      material: Lambertian.fromTexture(Noise()),
+    ),
+  );
+
   return scene;
 }
