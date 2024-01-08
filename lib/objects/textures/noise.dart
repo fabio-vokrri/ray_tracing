@@ -9,9 +9,7 @@ class Noise extends Texture {
   final Perlin _noise = Perlin();
   final double _scale;
 
-  Noise() : _scale = 1;
-
-  Noise.withScale(double scale) : _scale = scale;
+  Noise({double scale = 1}) : _scale = scale;
 
   @override
   Color value(double u, double v, Point3 point) {

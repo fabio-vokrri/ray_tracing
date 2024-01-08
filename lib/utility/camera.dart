@@ -126,28 +126,29 @@ class Camera {
       HitRecord? hitRecord,
     ) = scene.hit(ray, Interval(0.001, double.infinity), null);
 
-    if (didHit) {
-      var (
-        bool didScatter,
-        Color attenuation,
-        Ray scatteredRay,
-      ) = hitRecord!.material.scatter(ray, hitRecord);
+    if (!didHit) return backgroundColor;
 
-      if (didScatter) {
-        return _getRayColor(
-          scatteredRay,
-          depth - 1,
-          scene,
-        ).multiplyBy(attenuation);
-      }
+    Color colorFromEmission = hitRecord!.material.emit(
+      hitRecord.u,
+      hitRecord.v,
+      hitRecord.point,
+    );
 
-      return Color.black();
-    }
+    var (
+      bool didScatter,
+      Color attenuation,
+      Ray scatteredRay,
+    ) = hitRecord.material.scatter(ray, hitRecord);
 
-    // calculates color gradient of the sky
-    Vector3 unitDirection = ray.direction.normalized;
-    double a = 0.5 * (unitDirection.y + 1);
-    return Color.white() * (1 - a) + Color.fromHex(0xff8ecae6) * a;
+    if (!didScatter) return colorFromEmission;
+
+    Color colorFromScatter = _getRayColor(
+      scatteredRay,
+      depth - 1,
+      scene,
+    ).multiplyBy(attenuation);
+
+    return colorFromEmission + colorFromScatter;
   }
 
   /// Returns the ray at the given pixel location, with a small random offset,

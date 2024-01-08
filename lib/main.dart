@@ -5,26 +5,31 @@ import 'package:ray_tracing/geometry/color.dart';
 import 'package:ray_tracing/geometry/vector.dart';
 import 'package:ray_tracing/objects/materials/dielectric.dart';
 import 'package:ray_tracing/objects/materials/lambertian.dart';
+import 'package:ray_tracing/objects/materials/light.dart';
 import 'package:ray_tracing/objects/materials/material.dart';
 import 'package:ray_tracing/objects/materials/metal.dart';
+import 'package:ray_tracing/objects/shapes/quadrilateral.dart';
 import 'package:ray_tracing/objects/shapes/sphere.dart';
 import 'package:ray_tracing/objects/textures/checker.dart';
 import 'package:ray_tracing/objects/textures/image.dart';
 import 'package:ray_tracing/objects/textures/noise.dart';
+import 'package:ray_tracing/objects/textures/texture.dart';
 import 'package:ray_tracing/utility/camera.dart';
 import 'package:ray_tracing/utility/scene.dart';
 
 void main(List<String> args) async {
   // creates the camera and renders the scene.
   Camera camera = Camera(
-    aspectRatio: 1,
-    imageWidth: 720,
+    aspectRatio: 16 / 9,
+    imageWidth: 400,
     samplesPerPixel: 100,
     maxDepth: 50,
-    lookFrom: Point3(3, 2, -1),
+    verticalFOV: 20,
+    lookFrom: Point3(0, 0, -20),
+    lookAt: Point3(0, 2, 0),
   );
 
-  camera.render(scene6);
+  camera.render(scene8);
 }
 
 Scene get scene1 {
@@ -228,6 +233,102 @@ Scene get scene6 {
       material: Lambertian.fromTexture(Noise()),
     ),
   );
+
+  return scene;
+}
+
+Scene get scene7 {
+  Scene scene = Scene();
+
+  Material left = Lambertian(albedo: Color.fromDecimal(1, 0.2, 0.2));
+  Material right = Lambertian(albedo: Color.fromDecimal(0.2, 1, 0.2));
+  Material top = Lambertian(albedo: Color.fromDecimal(0.2, 0.2, 1));
+  Material bottom = Lambertian(albedo: Color.fromDecimal(1, 0.5, 0));
+  Material back = Lambertian(albedo: Color.fromDecimal(1, 0, 0.5));
+
+  scene.add(
+    Quadrilateral(
+      q: Point3(-3, -2, 5),
+      u: Vector3(0, 0, -4),
+      v: Vector3(0, 4, 0),
+      material: left,
+    ),
+  );
+  scene.add(
+    Quadrilateral(
+      q: Point3(-2, -2, 0),
+      u: Vector3(4, 0, 0),
+      v: Vector3(0, 4, 0),
+      material: back,
+    ),
+  );
+  scene.add(
+    Quadrilateral(
+      q: Point3(3, -2, 1),
+      u: Vector3(0, 0, 4),
+      v: Vector3(0, 4, 0),
+      material: right,
+    ),
+  );
+  scene.add(
+    Quadrilateral(
+      q: Point3(-2, 3, 1),
+      u: Vector3(4, 0, 0),
+      v: Vector3(0, 0, 4),
+      material: top,
+    ),
+  );
+  scene.add(
+    Quadrilateral(
+      q: Point3(-2, -3, 5),
+      u: Vector3(4, 0, 0),
+      v: Vector3(0, 0, -4),
+      material: bottom,
+    ),
+  );
+
+  return scene;
+}
+
+Scene get scene8 {
+  Scene scene = Scene();
+
+  Texture noise = Noise(scale: 4);
+  scene.add(
+    Sphere(
+      center: Point3(0, -10000, 0),
+      radius: 10000,
+      material: Lambertian.fromTexture(noise),
+    ),
+  );
+
+  scene.add(
+    Sphere(
+      center: Point3(0, 2, 0),
+      radius: 2,
+      material: Lambertian.fromTexture(noise),
+    ),
+  );
+
+  Material light = Light.fromColor(Color.white());
+  scene.add(
+    Sphere(
+      center: Point3(0, 200, 0),
+      radius: 100,
+      material: light,
+    ),
+  );
+
+  return scene;
+}
+
+Scene get scene9 {
+  Scene scene = Scene();
+  var red = Lambertian(albedo: Color.fromDecimal(0.65, 0.5, 0.5));
+  var white = Lambertian(albedo: Color.fromDecimal(0.73, 0.73, 0.73));
+  var green = Lambertian(albedo: Color.fromDecimal(0.12, 0.45, 0.15));
+  var light = Light.fromColor(Color.white());
+  
 
   return scene;
 }
