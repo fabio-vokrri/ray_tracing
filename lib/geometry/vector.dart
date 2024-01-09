@@ -171,7 +171,7 @@ class Vector3 {
   /// Returns a new vector generated from the product of every component
   /// of this vector with the corresponding component of `other`.
   Vector3 multiplyBy(Vector3 other) {
-    return Vector3(x * other.x, y * other.y, z * other.z);
+    return Vector3(_x * other.x, _y * other.y, _z * other.z);
   }
 
   /// Returns a new vector whose components are generated from the cross product

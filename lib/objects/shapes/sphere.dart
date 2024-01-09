@@ -92,7 +92,8 @@ class Sphere extends Hittable {
       v: v,
       material: _material,
       t: root,
-    )..setNormalFace(ray, outwardNormal);
+    );
+    hitRecord.setNormalFace(ray, outwardNormal);
 
     return (true, hitRecord);
   }

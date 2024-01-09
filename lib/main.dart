@@ -20,16 +20,16 @@ import 'package:ray_tracing/utility/scene.dart';
 void main(List<String> args) async {
   // creates the camera and renders the scene.
   Camera camera = Camera(
-    aspectRatio: 16 / 9,
+    aspectRatio: 1,
     imageWidth: 400,
     samplesPerPixel: 100,
     maxDepth: 50,
-    verticalFOV: 20,
-    lookFrom: Point3(0, 0, -20),
-    lookAt: Point3(0, 2, 0),
+    verticalFOV: 40,
+    lookFrom: Point3(278, 278, -800),
+    lookAt: Point3(278, 278, 0),
   );
 
-  camera.render(scene8);
+  camera.render(scene9);
 }
 
 Scene get scene1 {
@@ -328,7 +328,55 @@ Scene get scene9 {
   var white = Lambertian(albedo: Color.fromDecimal(0.73, 0.73, 0.73));
   var green = Lambertian(albedo: Color.fromDecimal(0.12, 0.45, 0.15));
   var light = Light.fromColor(Color.white());
-  
+
+  scene.add(
+    Quadrilateral(
+      q: Point3(555, 0, 0),
+      u: Vector3(0, 555, 0),
+      v: Vector3(0, 0, 555),
+      material: green,
+    ),
+  );
+  scene.add(
+    Quadrilateral(
+      q: Point3(0, 0, 0),
+      u: Vector3(0, 555, 0),
+      v: Vector3(0, 0, 555),
+      material: red,
+    ),
+  );
+  scene.add(
+    Quadrilateral(
+      q: Point3(343, 554, 332),
+      u: Vector3(-130, 0, 0),
+      v: Vector3(0, 0, -105),
+      material: light,
+    ),
+  );
+  scene.add(
+    Quadrilateral(
+      q: Point3(0, 0, 0),
+      u: Vector3(555, 0, 0),
+      v: Vector3(0, 0, 555),
+      material: white,
+    ),
+  );
+  scene.add(
+    Quadrilateral(
+      q: Point3(555, 555, 555),
+      u: Vector3(-555, 0, 0),
+      v: Vector3(0, 0, -555),
+      material: white,
+    ),
+  );
+  scene.add(
+    Quadrilateral(
+      q: Point3(0, 0, 555),
+      u: Vector3(555, 0, 0),
+      v: Vector3(0, 555, 0),
+      material: white,
+    ),
+  );
 
   return scene;
 }

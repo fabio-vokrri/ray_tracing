@@ -117,9 +117,8 @@ class Camera {
   /// Returns the color of the given `ray` that hits the objects in the given `scene`
   /// for a maximum of `depth` times.
   Color _getRayColor(Ray ray, int depth, Hittable scene) {
-    if (depth <= 0) {
-      return Color.black();
-    }
+    // If the exceeded ray bounce limit, no more light is gathered.
+    if (depth <= 0) return Color.black();
 
     var (
       bool didHit,

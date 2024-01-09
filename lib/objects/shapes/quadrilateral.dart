@@ -11,7 +11,7 @@ class Quadrilateral extends Hittable {
   final Vector3 _u, _v;
   final Material _material;
 
-  late AABB _bbox;
+  late AABB _boundingBox;
   late Vector3 _normal, _w;
   late double _d;
 
@@ -29,43 +29,41 @@ class Quadrilateral extends Hittable {
     _normal = n.normalized;
     _d = _normal.dot(_q);
     _w = n / (n.dot(n));
-    _bbox = AABB.fromPoints(_q, _q + _u + _v).pad();
+    _boundingBox = AABB.fromPoints(_q, _q + _u + _v).pad();
   }
 
   @override
-  AABB get boundingBox => _bbox;
+  AABB get boundingBox => _boundingBox;
 
   @override
   (bool, HitRecord?) hit(Ray ray, Interval rayT, HitRecord? hitRecord) {
-    double denom = _normal.dot(ray.direction);
-    if (denom.abs() < 1e-8) {
-      // theray is parallel to the plane
-      return (false, null);
-    }
+    double denominator = _normal.dot(ray.direction);
+    if (denominator.abs() < 1e-8) return (false, null);
 
-    double t = (_d - _normal.dot(ray.origin)) / denom;
-    if (!rayT.contains(t)) {
-      return (false, null);
-    }
+    double t = (_d - _normal.dot(ray.origin)) / denominator;
+    if (!rayT.contains(t)) return (false, null);
 
     Vector3 intersection = ray.at(t);
     Vector3 planarHitPointVector = intersection - _q;
     double alpha = _w.dot(planarHitPointVector.cross(_v));
     double beta = _w.dot(_u.cross(planarHitPointVector));
 
-    if (alpha < 0 || alpha > 1 || beta < 0 || beta > 1) {
+    // Given the hit point in plane coordinates,
+    // returns false if it is outside the primitive.
+    if ((alpha < 0) || (alpha > 1) || (beta < 0) || (beta > 1)) {
       return (false, null);
     }
 
-    HitRecord record = HitRecord(
+    hitRecord = HitRecord(
       point: intersection,
       normal: _normal,
       material: _material,
       t: t,
       u: alpha,
       v: beta,
-    )..setNormalFace(ray, _normal);
+    );
+    hitRecord.setNormalFace(ray, _normal);
 
-    return (true, record);
+    return (true, hitRecord);
   }
 }

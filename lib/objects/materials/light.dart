@@ -14,7 +14,7 @@ class Light extends Material {
 
   @override
   (bool, Color, Ray) scatter(Ray ray, HitRecord record) {
-    return (false, Color.black(), ray);
+    return (false, Color.white(), ray);
   }
 
   @override
